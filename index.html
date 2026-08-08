@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Kids Fun & Learn App</title>
+  <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIktpZHMgR3JvdyAmIExlYXJuIEFwcCIsCiAgInNob3J0X25hbWUiOiAiS2lkc0FwcCIsCiAgInN0YXJ0X3VybCI6ICIuIiwKICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAiYmFja2dyb3VuZF9jb2xvciI6ICIjZTFmNWZlIiwKICAidGhlbWVfY29sb3IiOiAiIzAyODhkMSIKfQ==">
+  <meta name="theme-color" content="#0288d1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Fredoka', cursive, sans-serif; touch-action: manipulation; user-select: none; -webkit-user-select: none; }
+    .pop-btn { transition: transform 0.15s ease, box-shadow 0.15s ease; }
+    .pop-btn:active { transform: scale(0.95); }
+    canvas { touch-action: none; }
+  </style>
+</head>
+<body class="bg-sky-100 min-h-screen flex flex-col justify-between overflow-x-hidden">
+  <div id="app" class="max-w-md w-full mx-auto min-h-screen flex flex-col justify-between relative shadow-2xl bg-white">
+    <header id="app-header" class="bg-blue-600 text-white p-4 flex items-center justify-between shadow-md transition-colors duration-300">
+      <button id="back-btn" onclick="navigateTo('home')" class="hidden text-2xl hover:bg-blue-700 w-10 h-10 rounded-full flex items-center justify-center transition">
+        <i class="fa-solid fa-arrow-left"></i>
+      </button>
+      <h1 id="header-title" class="text-2xl font-bold text-center flex-grow">🎓 Kids Fun & Learn</h1>
+      <div class="w-10"></div>
+    </header>
+    <main class="flex-grow flex items-center justify-center p-4">
+      <section id="screen-home" class="w-full space-y-6 text-center">
+        <div class="py-2">
+          <div class="text-7xl animate-bounce mb-3">🎒</div>
+          <h2 class="text-3xl font-extrabold text-blue-900 tracking-wide">Welcome Little Champ!</h2>
+          <p class="text-gray-500 mt-1 font-semibold">Choose a game to play and learn</p>
+        </div>
+        <div class="space-y-4 px-2">
+          <button onclick="navigateTo('animals')" class="pop-btn w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold p-5 rounded-2xl shadow-lg flex items-center justify-between border-b-4 border-emerald-700">
+            <span class="text-4xl">🦁</span>
+            <span class="text-2xl tracking-wide">Animals & Birds</span>
+            <i class="fa-solid fa-chevron-right text-xl"></i>
+          </button>
+          <button onclick="navigateTo('coloring')" class="pop-btn w-full bg-amber-500 hover:bg-amber-600 text-white font-bold p-5 rounded-2xl shadow-lg flex items-center justify-between border-b-4 border-amber-700">
+            <span class="text-4xl">🎨</span>
+            <span class="text-2xl tracking-wide">Coloring Studio</span>
+            <i class="fa-solid fa-chevron-right text-xl"></i>
+          </button>
+          <button onclick="navigateTo('abc')" class="pop-btn w-full bg-purple-600 hover:bg-purple-700 text-white font-bold p-5 rounded-2xl shadow-lg flex items-center justify-between border-b-4 border-purple-800">
+            <span class="text-4xl">🔤</span>
+            <span class="text-2xl tracking-wide">Learn ABC</span>
+            <i class="fa-solid fa-chevron-right text-xl"></i>
+          </button>
+        </div>
+      </section>
+      <section id="screen-animals" class="hidden w-full text-center space-y-6">
+        <div class="bg-emerald-50 rounded-3xl p-8 shadow-inner border-2 border-emerald-200">
+          <div id="animal-emoji" class="text-9xl my-4 transition-all duration-300 transform scale-100 hover:scale-110">🐯</div>
+          <div id="animal-name" class="text-4xl font-extrabold text-emerald-800 tracking-wider mt-2">Tiger</div>
+        </div>
+        <div class="flex items-center justify-around px-4">
+          <button onclick="prevAnimal()" class="pop-btn bg-amber-500 hover:bg-amber-600 text-white font-bold p-4 rounded-full shadow-lg text-2xl w-16 h-16 flex items-center justify-center"><i class="fa-solid fa-arrow-left"></i></button>
+          <span id="animal-counter" class="text-gray-500 font-bold text-xl">1 / 8</span>
+          <button onclick="nextAnimal()" class="pop-btn bg-amber-500 hover:bg-amber-600 text-white font-bold p-4 rounded-full shadow-lg text-2xl w-16 h-16 flex items-center justify-center"><i class="fa-solid fa-arrow-right"></i></button>
+        </div>
+        <button onclick="navigateTo('home')" class="pop-btn bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-8 py-3 rounded-full text-lg shadow-md">Back to Home</button>
+      </section>
+      <section id="screen-coloring" class="hidden w-full flex flex-col items-center space-y-4">
+        <div class="relative w-full aspect-square bg-white border-4 border-amber-400 rounded-2xl shadow-md overflow-hidden">
+          <canvas id="paint-canvas" class="w-full h-full cursor-crosshair"></canvas>
+        </div>
+        <div class="w-full bg-amber-50 p-3 rounded-xl border border-amber-200">
+          <p class="text-sm font-bold text-gray-700 mb-2">Select Color:</p>
+          <div class="flex flex-wrap gap-2 justify-center" id="color-palette"></div>
+        </div>
+        <div class="flex items-center justify-between w-full px-2 gap-2">
+          <div class="flex items-center space-x-2">
+            <span class="text-xs font-bold text-gray-600">Brush:</span>
+            <input type="range" id="brush-size" min="2" max="30" value="10" class="w-20 accent-amber-500">
+          </div>
+          <button onclick="clearCanvas()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-bold shadow transition"><i class="fa-solid fa-eraser mr-1"></i> Clear</button>
+          <button onclick="navigateTo('home')" class="bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded-lg text-sm font-bold shadow transition">Back</button>
+        </div>
+      </section>
+      <section id="screen-abc" class="hidden w-full text-center space-y-6">
+        <div class="bg-purple-50 rounded-3xl p-6 shadow-inner border-2 border-purple-200 relative">
+          <div id="abc-letter" class="text-9xl font-black text-purple-800 my-2">A</div>
+          <div id="abc-word" class="text-4xl font-extrabold text-purple-900 mt-2">Apple 🍎</div>
+        </div>
+        <div class="flex items-center justify-around px-4">
+          <button onclick="prevLetter()" class="pop-btn bg-purple-600 hover:bg-purple-700 text-white font-bold p-4 rounded-full shadow-lg text-2xl w-16 h-16 flex items-center justify-center"><i class="fa-solid fa-arrow-left"></i></button>
+          <span id="abc-counter" class="text-gray-500 font-bold text-xl">1 / 26</span>
+          <button onclick="nextLetter()" class="pop-btn bg-purple-600 hover:bg-purple-700 text-white font-bold p-4 rounded-full shadow-lg text-2xl w-16 h-16 flex items-center justify-center"><i class="fa-solid fa-arrow-right"></i></button>
+        </div>
+        <button onclick="navigateTo('home')" class="pop-btn bg-purple-700 hover:bg-purple-800 text-white font-bold px-8 py-3 rounded-full text-lg shadow-md">Back to Home</button>
+      </section>
+    </main>
+    <footer class="bg-slate-50 text-center py-2 text-xs text-gray-500 border-t border-gray-100">
+      Kids Learning App • Learn with Fun
+    </footer>
+  </div>
+  <script>
+    const animals = [{'emoji': '🐯', 'name': 'Tiger'}, {'emoji': '🦁', 'name': 'Lion'}, {'emoji': '🐘', 'name': 'Elephant'}, {'emoji': '🦒', 'name': 'Giraffe'}, {'emoji': '🐻', 'name': 'Bear'}, {'emoji': '🦓', 'name': 'Zebra'}, {'emoji': '🦋', 'name': 'Butterfly'}, {'emoji': '🦅', 'name': 'Eagle'}];
+    const alphabets = [{'letter': 'A', 'word': 'Apple 🍎'}, {'letter': 'B', 'word': 'Ball ⚽'}, {'letter': 'C', 'word': 'Cat 🐱'}, {'letter': 'D', 'word': 'Dog 🐶'}, {'letter': 'E', 'word': 'Elephant 🐘'}, {'letter': 'F', 'word': 'Fish 🐟'}, {'letter': 'G', 'word': 'Giraffe 🦒'}, {'letter': 'H', 'word': 'Horse 🐎'}, {'letter': 'I', 'word': 'Ice Cream 🍦'}, {'letter': 'J', 'word': 'Jug 🏺'}, {'letter': 'K', 'word': 'Kite 🪁'}, {'letter': 'L', 'word': 'Lion 🦁'}, {'letter': 'M', 'word': 'Monkey 🐒'}, {'letter': 'N', 'word': 'Nest 🪹'}, {'letter': 'O', 'word': 'Owl 🦉'}, {'letter': 'P', 'word': 'Parrot 🦜'}, {'letter': 'Q', 'word': 'Queen 👸'}, {'letter': 'R', 'word': 'Rabbit 🐇'}, {'letter': 'S', 'word': 'Sun ☀️'}, {'letter': 'T', 'word': 'Tiger 🐯'}, {'letter': 'U', 'word': 'Umbrella ☂️'}, {'letter': 'V', 'word': 'Van 🚐'}, {'letter': 'W', 'word': 'Watermelon 🍉'}, {'letter': 'X', 'word': 'Xylophone 🎼'}, {'letter': 'Y', 'word': 'Yak 🐂'}, {'letter': 'Z', 'word': 'Zebra 🦓'}];
+    const colorPalette = ['#ef4444', '#3b82f6', '#22c55e', '#eab308', '#a855f7', '#f97316', '#ec4899', '#78350f', '#000000'];
+    let currentAnimalIndex = 0, currentAbcIndex = 0, selectedColor = '#ef4444';
+    function navigateTo(s) {
+      ['home', 'animals', 'coloring', 'abc'].forEach(sc => document.getElementById(`screen-${sc}`).classList.add('hidden'));
+      const h = document.getElementById('app-header'), ht = document.getElementById('header-title'), bb = document.getElementById('back-btn');
+      document.getElementById(`screen-${s}`).classList.remove('hidden');
+      if (s === 'home') { h.className = "bg-blue-600 text-white p-4 flex items-center justify-between shadow-md"; ht.innerText = "🎓 Kids Fun & Learn"; bb.classList.add('hidden'); }
+      else if (s === 'animals') { h.className = "bg-emerald-600 text-white p-4 flex items-center justify-between shadow-md"; ht.innerText = "🦁 Animals & Birds"; bb.classList.remove('hidden'); renderAnimal(); }
+      else if (s === 'coloring') { h.className = "bg-amber-600 text-white p-4 flex items-center justify-between shadow-md"; ht.innerText = "🎨 Coloring Studio"; bb.classList.remove('hidden'); setTimeout(initCanvas, 100); }
+      else if (s === 'abc') { h.className = "bg-purple-600 text-white p-4 flex items-center justify-between shadow-md"; ht.innerText = "🔤 Learn ABC"; bb.classList.remove('hidden'); renderAbc(); }
+    }
+    function renderAnimal() { const item = animals[currentAnimalIndex]; document.getElementById('animal-emoji').innerText = item.emoji; document.getElementById('animal-name').innerText = item.name; document.getElementById('animal-counter').innerText = `${currentAnimalIndex + 1} / ${animals.length}`; }
+    function nextAnimal() { currentAnimalIndex = (currentAnimalIndex + 1) % animals.length; renderAnimal(); }
+    function prevAnimal() { currentAnimalIndex = (currentAnimalIndex - 1 + animals.length) % animals.length; renderAnimal(); }
+    function renderAbc() { const item = alphabets[currentAbcIndex]; document.getElementById('abc-letter').innerText = item.letter; document.getElementById('abc-word').innerText = item.word; document.getElementById('abc-counter').innerText = `${currentAbcIndex + 1} / ${alphabets.length}`; }
+    function nextLetter() { currentAbcIndex = (currentAbcIndex + 1) % alphabets.length; renderAbc(); }
+    function prevLetter() { currentAbcIndex = (currentAbcIndex - 1 + alphabets.length) % alphabets.length; renderAbc(); }
+    let canvas, ctx, isDrawing = false;
+    function initCanvas() {
+      canvas = document.getElementById('paint-canvas'); ctx = canvas.getContext('2d');
+      const rect = canvas.getBoundingClientRect(); canvas.width = rect.width; canvas.height = rect.height;
+      const paletteContainer = document.getElementById('color-palette'); paletteContainer.innerHTML = '';
+      colorPalette.forEach(color => {
+        const btn = document.createElement('button');
+        btn.className = `w-8 h-8 rounded-full border-2 border-white shadow-md transition-transform ${color === selectedColor ? 'scale-125 border-gray-800' : ''}`;
+        btn.style.backgroundColor = color;
+        btn.onclick = () => { selectedColor = color; document.querySelectorAll('#color-palette button').forEach(b => b.classList.remove('scale-125', 'border-gray-800')); btn.classList.add('scale-125', 'border-gray-800'); };
+        paletteContainer.appendChild(btn);
+      });
+      canvas.addEventListener('mousedown', startDrawing); canvas.addEventListener('mousemove', draw); canvas.addEventListener('mouseup', stopDrawing); canvas.addEventListener('mouseleave', stopDrawing);
+      canvas.addEventListener('touchstart', startDrawingTouch); canvas.addEventListener('touchmove', drawTouch); canvas.addEventListener('touchend', stopDrawing);
+    }
+    function getBrushSize() { return document.getElementById('brush-size').value; }
+    function startDrawing(e) { isDrawing = true; draw(e); }
+    function draw(e) { if (!isDrawing) return; const rect = canvas.getBoundingClientRect(); const x = e.clientX - rect.left, y = e.clientY - rect.top; ctx.lineWidth = getBrushSize(); ctx.lineCap = 'round'; ctx.strokeStyle = selectedColor; ctx.lineTo(x, y); ctx.stroke(); ctx.beginPath(); ctx.moveTo(x, y); }
+    function startDrawingTouch(e) { isDrawing = true; drawTouch(e); }
+    function drawTouch(e) { if (!isDrawing) return; e.preventDefault(); const touch = e.touches[0]; const rect = canvas.getBoundingClientRect(); const x = touch.clientX - rect.left, y = touch.clientY - rect.top; ctx.lineWidth = getBrushSize(); ctx.lineCap = 'round'; ctx.strokeStyle = selectedColor; ctx.lineTo(x, y); ctx.stroke(); ctx.beginPath(); ctx.moveTo(x, y); }
+    function stopDrawing() { isDrawing = false; if (ctx) ctx.beginPath(); }
+    function clearCanvas() { if (ctx && canvas) ctx.clearRect(0, 0, canvas.width, canvas.height); }
+    window.onload = () => navigateTo('home');
+  </script>
+</body>
+</html>
